@@ -4,6 +4,7 @@ import { useTypingEffect } from '@/components/useTypingEffect'
 import menu from '../public/caribou_menu_items.json'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 
 type AIState = 'idle' | 'listening' | 'speaking'
 
@@ -158,19 +159,40 @@ export function TextAnimation ({ onStartListening, onStopListening, isAudioPlayi
           <span dangerouslySetInnerHTML={{ __html: animatedImportant }} />
         </div>
       )}
-      {/* Blue circle */}
+      {/* Blue circle with radial animation */}
       <div className="relative mb-8 cursor-pointer" onClick={handleCircleClick} role="button" aria-label={aiState === 'listening' ? 'Stop listening' : 'Start listening'}>
         <motion.div
-          className="w-20 h-20 bg-gradient-to-br from-[#6FE5F1] to-[#9DEEF6] rounded-full flex items-center justify-center"
-          animate={aiState === 'idle' ? { scale: [1, 1.1, 1] } : aiState === 'speaking' ? { scale: [1, 1.2, 0.8, 1.2, 1] } : {}}
+          className="w-20 h-20 rounded-full flex items-center justify-center"
+          animate={{
+            background: aiState === 'speaking'
+              ? [
+                  'conic-gradient(from 0deg, #8A63E3, #B054BC, #DE6B88, #FF9F69, #FFCD5C, #8A63E3)',
+                  // 'conic-gradient(from 90deg, #8A63E3, #B054BC, #DE6B88, #FF9F69, #FFCD5C, #8A63E3)',
+                  // 'conic-gradient(from 180deg, #8A63E3, #B054BC, #DE6B88, #FF9F69, #FFCD5C, #8A63E3)',
+                  // 'conic-gradient(from 270deg, #8A63E3, #B054BC, #DE6B88, #FF9F69, #FFCD5C, #8A63E3)',
+                  'conic-gradient(from 180deg, #8A63E3, #B054BC, #DE6B88, #FF9F69, #FFCD5C, #8A63E3)'
+                ]
+              : 'radial-gradient(circle at center, #2370f4ff 0%, #1e8bffff 100%)'
+          }}
           transition={{
             repeat: Infinity,
-            ease: 'easeInOut',
-            duration: aiState === 'speaking' ? 0.8 : 1.5,
+            duration: 4,
+            ease: 'linear'
           }}
-        />
+        >
+          {/* Voice icon in the center when in idle state */}
+          {aiState === 'idle' && (
+            <Image 
+              src="/voice.svg" 
+              alt="Voice" 
+              width={26} 
+              height={26} 
+              className="opacity-80"
+            />
+          )}
+        </motion.div>
         {aiState === 'listening' && (
-          <svg className="absolute top-1/2 left-1/2 w-24 h-24 -translate-x-1/2 -translate-y-1/2" viewBox="0 0 100 100">
+          <svg className="absolute top-1/2 left-1/2 w-12 h-12 -translate-x-1/2 -translate-y-1/2" viewBox="0 0 100 100">
             <motion.circle
               cx="50"
               cy="50"
@@ -200,4 +222,4 @@ export function TextAnimation ({ onStartListening, onStopListening, isAudioPlayi
   )
 }
 
-export default TextAnimation;
+export default TextAnimation
