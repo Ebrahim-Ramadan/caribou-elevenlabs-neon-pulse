@@ -97,7 +97,7 @@ export const AnimatedBackground = () => {
       muted
       loop
       controls={false}
-      className="fixed grayscale object-cover bottom-0 z-[-1] pointer-events-none opacity-75 "
+      className="fixed grayscale object-cover bottom-10 md:bottom-0 z-[-1] pointer-events-none opacity-75 "
     />
   );
 };

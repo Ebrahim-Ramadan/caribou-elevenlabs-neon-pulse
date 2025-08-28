@@ -183,14 +183,14 @@ export default function TextAnimation({
       {/* )} */}
 
       {/* Price display */}
-      {animatedImportant && (
+      {/* {animatedImportant && (
         <div
           className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mb-6 text-center text-xl font-bold"
           style={{ minHeight: 80 }}
         >
           <span dangerouslySetInnerHTML={{ __html: animatedImportant }} />
         </div>
-      )}
+      )} */}
 
       {/* Circle */}
       <div
