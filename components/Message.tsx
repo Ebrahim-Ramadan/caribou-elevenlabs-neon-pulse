@@ -1,5 +1,7 @@
 
 import { Cpu, User } from 'react-feather'
+import { arabicMenuMap } from './arMenuMap'
+import menu from '../public/caribou_menu_items.json'
 
 // Helper to convert Arabic number words to digits (supports up to 2 decimal places)
 const arabicNumberMap: Record<string, string> = {
@@ -58,6 +60,16 @@ function arabicWordsToNumber(text: string): string {
 
 export default function ({ conversationItem }: { conversationItem: { role: string; formatted: { transcript: string } } }) {
   let transcript = conversationItem.formatted.transcript;
+  // Lookup and bold price for any Arabic menu item mentioned
+  Object.keys(arabicMenuMap).forEach(arName => {
+    const enName = arabicMenuMap[arName];
+    const menuItem = (menu as any[]).find(item => item.name === enName);
+    if (menuItem) {
+      // Regex: match the Arabic name optionally followed by any price words and 'دينار كويتي'
+      const regex = new RegExp(`${arName}(?:[^\u0600-\u06FF\d]*[\u0600-\u06FF\d\s]*)?(دينار كويتي)?`, 'g');
+      transcript = transcript.replace(regex, `${arName} <b>${menuItem.price_kwd}</b> دينار كويتي`);
+    }
+  });
   // First, convert Arabic number words to digits and bold them
   transcript = arabicWordsToNumber(transcript);
   // Then, bold any digit-based price as well, and format to X.XXX
