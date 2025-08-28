@@ -77,6 +77,56 @@ export default function ({
     "<b>{{total_price_kwd}}</b>"
   );
 
+  // Lookup menu items by Arabic name but only show names, not prices
+  let orderItems: {name: string, price: string}[] = [];
+  let totalPrice = 0;
+  
+  // First identify all ordered items and calculate total
+  (menu as any[]).forEach((item) => {
+    if (item.name_ar && transcript.includes(item.name_ar)) {
+      orderItems.push({
+        name: item.name_ar,
+        price: item.price_kwd
+      });
+      totalPrice += parseFloat(item.price_kwd);
+    }
+  });
+  
+  // Replace item mentions without showing individual prices
+  (menu as any[]).forEach((item) => {
+    if (item.name_ar) {
+      const arName = item.name_ar;
+      const regex = new RegExp(
+        `${arName}(?:[^\u0600-\u06FF\d]*[\u0600-\u06FF\d\s]*)?(دينار كويتي)?`,
+        "g"
+      );
+      transcript = transcript.replace(
+        regex,
+        `${arName}`  // Only keep the item name
+      );
+    }
+  });
+
+  // Add total price if items were found
+  if (orderItems.length > 0) {
+    // Replace total_price_kwd placeholder with actual calculated total
+    transcript = transcript.replace(
+      /\{\{\s*total_price_kwd\s*\}\}/g,
+      `<b>${totalPrice.toFixed(3)}</b>`
+    );
+    
+    // If there's no placeholder but we have items, add the total price at the end
+    if (!transcript.includes('{{total_price_kwd}}') && !transcript.includes('المجموع')) {
+      transcript += ` المجموع: <b>${totalPrice.toFixed(3)}</b> دينار كويتي`;
+    }
+  } else {
+    // Bold {{total_price_kwd}} variable if no items found
+    transcript = transcript.replace(
+      /\{\{\s*total_price_kwd\s*\}\}/g,
+      "<b>{{total_price_kwd}}</b>"
+    );
+  }
+
   // Convert Arabic words → digits
   transcript = arabicWordsToNumber(transcript);
 

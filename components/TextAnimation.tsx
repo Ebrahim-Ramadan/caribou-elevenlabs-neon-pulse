@@ -120,7 +120,8 @@ export function TextAnimation ({ onStartListening, onStopListening, isAudioPlayi
     console.log('Total price calculated:', totalPrice.toFixed(3), 'KWD');
   }
   
-  // Second pass: Replace item mentions with correct prices
+  // Second pass: Replace item mentions with correct prices - REMOVE INDIVIDUAL PRICES
+  // Instead of showing individual prices, we'll just keep the item names
   (menu as any[]).forEach((item) => {
     if (item.name_ar) {
       const arName = item.name_ar;
@@ -130,17 +131,23 @@ export function TextAnimation ({ onStartListening, onStopListening, isAudioPlayi
       );
       normalizedText = normalizedText.replace(
         regex,
-        `${arName} <b>${item.price_kwd}</b> دينار كويتي`
+        `${arName}`  // Only keep the item name without individual price
       );
     }
   });
   
-  // Replace total_price_kwd placeholder with actual calculated total if items were found
+  // Add total price at the end if items were found
   if (orderItems.length > 0) {
+    // Replace total_price_kwd placeholder with actual calculated total
     normalizedText = normalizedText.replace(
       /\{\{\s*total_price_kwd\s*\}\}/g,
       `<b>${totalPrice.toFixed(3)}</b>`
     );
+    
+    // If there's no placeholder but we have items, add the total price at the end
+    if (!normalizedText.includes('{{total_price_kwd}}') && !normalizedText.includes('المجموع')) {
+      normalizedText += ` المجموع: <b>${totalPrice.toFixed(3)}</b> دينار كويتي`;
+    }
   } else {
     normalizedText = normalizedText.replace(
       /\{\{\s*total_price_kwd\s*\}\}/g,

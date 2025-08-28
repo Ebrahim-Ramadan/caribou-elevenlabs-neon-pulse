@@ -72,7 +72,7 @@ export default function AnimatedBackground() {
           loop
           muted
           playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-60 blur-3xl scale-110"
+          className="absolute inset-0 w-full h-full object-cover opacity-60 blur-2xl scale-110"
           src={currentMediaSrc}
         />
       ) : (
