@@ -2,6 +2,7 @@
 
 import Message from '@/components/Message'
 import TextAnimation from '@/components/TextAnimation'
+import AnimatedBackground from '@/components/AnimatedBackground'
 import { type Role, useConversation } from '@11labs/react'
 import { useParams } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
@@ -83,31 +84,35 @@ export default function () {
     }
   }, [slug])
   return (
-    <>
-      
-      <TextAnimation currentText={currentText} isAudioPlaying={conversation.isSpeaking} onStopListening={handleStopListening} onStartListening={handleStartListening} />
-      {messages.length > 0 && (
-        <button className="text-sm fixed top-2 right-4 underline" onClick={() => setIsTranscriptOpen(!isTranscriptOpen)}>
-          Show Transcript
-        </button>
-      )}
-      {isTranscriptOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white text-black p-4 rounded shadow-lg max-w-[90%] max-h-[90%] overflow-y-scroll">
-            <div className="flex flex-row items-center justify-between">
-              <span>Transcript</span>
-              <button onClick={() => setIsTranscriptOpen(false)}>
-                <X />
-              </button>
-            </div>
-            <div className="border-t py-4 mt-4 flex flex-col gap-y-4">
-              {messages.map((conversationItem) => (
-                <Message key={conversationItem.id} conversationItem={conversationItem} />
-              ))}
+    <div className="relative w-screen h-screen overflow-hidden flex flex-col items-center justify-center select-none">
+      <AnimatedBackground />
+      <div className="relative z-10 flex flex-col items-center justify-center w-full h-full">
+        <div className="flex flex-col items-center justify-center w-full h-full max-w-xl mx-auto px-4">
+          <TextAnimation currentText={currentText} isAudioPlaying={conversation.isSpeaking} onStopListening={handleStopListening} onStartListening={handleStartListening} />
+          {messages.length > 0 && (
+            <button className="text-sm mt-4 underline bg-white/70 px-4 py-2 rounded shadow-lg hover:bg-white/90 transition" onClick={() => setIsTranscriptOpen(!isTranscriptOpen)}>
+              Show Transcript
+            </button>
+          )}
+        </div>
+        {isTranscriptOpen && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50">
+            <div className="bg-white/90 text-black p-6 rounded-2xl shadow-2xl max-w-[90vw] max-h-[90vh] overflow-y-auto backdrop-blur-xl border border-white/40">
+              <div className="flex flex-row items-center justify-between mb-2">
+                <span className="font-bold text-lg">Transcript</span>
+                <button className="ml-4" onClick={() => setIsTranscriptOpen(false)}>
+                  <X />
+                </button>
+              </div>
+              <div className="border-t py-4 mt-2 flex flex-col gap-y-4">
+                {messages.map((conversationItem) => (
+                  <Message key={conversationItem.id} conversationItem={conversationItem} />
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </>
+        )}
+      </div>
+    </div>
   )
 }

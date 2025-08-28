@@ -17,25 +17,39 @@ const arabicNumberMap: Record<string, string> = {
   'إحدى عشر': '11',
   'إثنا عشر': '12',
   'فاصلة': '.',
+  'و': '', // ignore conjunctions
 };
 
 function arabicWordsToNumber(text: string): string {
   // Match e.g. "واحد فاصلة اثنين وخمسين" or "واحد فاصلة خمسة" etc.
-  const priceWordsRegex = /((?:\w+\s*)+?)\s*دينار كويتي/g;
+  const priceWordsRegex = /((?:[\u0600-\u06FF]+|\d+|فاصلة|و)+)\s*دينار كويتي/g;
   return text.replace(priceWordsRegex, (match, numWords) => {
-    // Split by space and "و" (and)
-    let words = numWords.split(/\s+|و/).filter(Boolean);
+    // Split by space
+    let words = numWords.split(/\s+/).filter(Boolean);
     let result = '';
+    let afterDecimal = false;
     for (let w of words) {
-      if (arabicNumberMap[w]) {
+      if (w === 'فاصلة') {
+        result += '.';
+        afterDecimal = true;
+        continue;
+      }
+      if (arabicNumberMap[w] !== undefined) {
         result += arabicNumberMap[w];
       } else if (/^\d+$/.test(w)) {
         result += w;
       }
     }
+    // Remove trailing dot
+    if (result.endsWith('.')) result = result.slice(0, -1);
     // If result is a valid number, return bolded
-    if (result && !isNaN(Number(result.replace(/\./g, '.')))) {
-      return `<b>${result}</b> دينار كويتي`;
+    if (result && !isNaN(Number(result))) {
+      // Format to X.XXX
+      let [intPart, decPart] = result.split('.');
+      let formatted = intPart;
+      if (decPart) formatted += '.' + decPart.padEnd(3, '0').slice(0, 3);
+      else formatted += '.000';
+      return `<b>${formatted}</b> دينار كويتي`;
     }
     // fallback: return original
     return match;
@@ -46,9 +60,21 @@ export default function ({ conversationItem }: { conversationItem: { role: strin
   let transcript = conversationItem.formatted.transcript;
   // First, convert Arabic number words to digits and bold them
   transcript = arabicWordsToNumber(transcript);
-  // Then, bold any digit-based price as well
+  // Then, bold any digit-based price as well, and format to X.XXX
   const priceDigitsRegex = /(\d+[.,]?\d*\s*دينار كويتي)/g;
-  const formattedTranscript = transcript.replace(priceDigitsRegex, (match) => `<b>${match}</b>`);
+  const formattedTranscript = transcript.replace(priceDigitsRegex, (match) => {
+    // Extract number part
+    const numMatch = match.match(/\d+[.,]?\d*/);
+    if (numMatch) {
+      let num = numMatch[0].replace(',', '.');
+      let [intPart, decPart] = num.split('.');
+      let formatted = intPart;
+      if (decPart) formatted += '.' + decPart.padEnd(3, '0').slice(0, 3);
+      else formatted += '.000';
+      return `<b>${formatted}</b> دينار كويتي`;
+    }
+    return `<b>${match}</b>`;
+  });
   return (
     <div className="flex flex-row items-start gap-x-3 flex-wrap max-w-full">
       <div className="rounded border p-2 max-w-max">{conversationItem.role === 'user' ? <User /> : <Cpu />}</div>

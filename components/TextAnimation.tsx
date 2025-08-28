@@ -34,10 +34,10 @@ export default function AiTalkingAnimation({ onStartListening, onStopListening, 
   }, [isAudioPlaying])
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen p-4">
       <div className="relative mb-8 cursor-pointer" onClick={handleCircleClick} role="button" aria-label={aiState === 'listening' ? 'Stop listening' : 'Start listening'}>
         <motion.div
-          className="w-20 h-20 bg-gradient-to-br from-pink-500 to-violet-600 rounded-full flex items-center justify-center shadow-lg"
+          className="w-20 h-20 bg-gradient-to-br from-[#6FE5F1] to-[#9DEEF6] rounded-full flex items-center justify-center"
           animate={aiState === 'idle' ? { scale: [1, 1.1, 1] } : aiState === 'speaking' ? { scale: [1, 1.2, 0.8, 1.2, 1] } : {}}
           transition={{
             repeat: Infinity,
@@ -80,7 +80,7 @@ export default function AiTalkingAnimation({ onStartListening, onStopListening, 
               repeat: Infinity,
               ease: 'easeInOut',
             }}
-            className="h-5 w-2 bg-violet-600 mt-2"
+            className="h-5 w-2 bg-[#F7E4C5] mt-2"
           />
         )}
       </div>
