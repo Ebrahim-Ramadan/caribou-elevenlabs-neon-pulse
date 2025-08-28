@@ -84,29 +84,7 @@ export default function () {
   }, [slug])
   return (
     <>
-      <a target="_blank" href="https://github.com/neondatabase-labs/voice-thingy-with-elevenlabs-neon/" className="fixed bottom-2 right-2">
-        <GitHub />
-      </a>
-      <span className="fixed bottom-2 left-2">
-        Powered by{' '}
-        <a href="https://neon.tech/" className="underline" target="_blank">
-          Neon
-        </a>{' '}
-        and{' '}
-        <a href="https://elevenlabs.io/" className="underline" target="_blank">
-          ElevenLabs
-        </a>
-        .
-      </span>
-      <div className="fixed top-2 left-2 flex flex-row gap-x-2 items-center">
-        <a href="https://neon.tech" target="_blank">
-          <img loading="lazy" decoding="async" src="https://neon.tech/brand/neon-logo-light-color.svg" width="158" height="48" className="h-[30px] w-auto" alt="Neon Logo" />
-        </a>
-        <span className="text-gray-400">/</span>
-        <a href="/">
-          <span>Pulse</span>
-        </a>
-      </div>
+      
       <TextAnimation currentText={currentText} isAudioPlaying={conversation.isSpeaking} onStopListening={handleStopListening} onStartListening={handleStartListening} />
       {messages.length > 0 && (
         <button className="text-sm fixed top-2 right-4 underline" onClick={() => setIsTranscriptOpen(!isTranscriptOpen)}>

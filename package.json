@@ -10,6 +10,7 @@
   "dependencies": {
     "@11labs/react": "^0.0.4",
     "@neondatabase/serverless": "^0.10.4",
+    "dotenv": "^17.2.1",
     "framer-motion": "^11.13.5",
     "motion": "^11.11.17",
     "next": "^15.1.0",
