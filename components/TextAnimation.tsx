@@ -80,11 +80,11 @@ export default function TextAnimation({
       price: '2.000',
       imageUrl: '/default-image.png',
     },
-    {
-      name: 'بودينو كراميل مملح',
-      price: '1.900',
-      imageUrl: '/default-image.png',
-    },
+    // {
+    //   name: 'بودينو كراميل مملح',
+    //   price: '1.900',
+    //   imageUrl: '/default-image.png',
+    // },
   ]
 
   // Start summary after 5s when conversation starts
