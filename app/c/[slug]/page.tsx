@@ -52,8 +52,8 @@ export default function () {
   return (
     <div className="relative w-screen h-screen overflow-hidden flex flex-col items-center justify-center select-none">
       <AnimatedBackground />
-      <div className="relative z-10 flex flex-col items-center justify-center w-full h-full">
-        <div className="flex flex-col items-center justify-center w-full h-full max-w-xl mx-auto px-4">
+      <div className="relative z-10 bg-blue-500/20 backdrop-blur-md flex flex-col items-center justify-center w-full h-full">
+        <div className="flex flex-col  items-center justify-center w-full h-full max-w-xl mx-auto px-4">
           <TextAnimation currentText={currentText} isAudioPlaying={conversation.isSpeaking} onStopListening={handleStopListening} onStartListening={handleStartListening} />
         </div>
       </div>

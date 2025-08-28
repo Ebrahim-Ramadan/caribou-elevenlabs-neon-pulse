@@ -72,7 +72,7 @@ export default function AnimatedBackground() {
           loop
           muted
           playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-40 blur-lg scale-110"
+          className="absolute inset-0 w-full h-full object-cover opacity-40  scale-110"
           src={currentMediaSrc}
         />
       ) : (
@@ -80,7 +80,7 @@ export default function AnimatedBackground() {
           key={currentMediaSrc} // Add key to force re-render when src changes
           src={currentMediaSrc}
           alt="Animated background"
-          className="absolute inset-0 w-full h-full object-cover opacity-40 blur-lg scale-110" // Apply similar styling to GIF
+          className="absolute inset-0 w-full h-full object-cover opacity-40  scale-110" // Apply similar styling to GIF
         />
       )}
     </div>
