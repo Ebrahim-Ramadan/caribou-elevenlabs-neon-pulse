@@ -99,6 +99,7 @@ export function TextAnimation ({ onStartListening, onStopListening, isAudioPlayi
   let normalizedText = currentText;
   let orderItems: {name: string, price: string}[] = [];
   let totalPrice = 0;
+  let totalPriceDisplay = '';
   
   // First pass: Identify ordered items and calculate total price
   (menu as any[]).forEach((item) => {
@@ -118,73 +119,20 @@ export function TextAnimation ({ onStartListening, onStopListening, isAudioPlayi
   if (orderItems.length > 0) {
     console.log('Identified ordered items:', orderItems);
     console.log('Total price calculated:', totalPrice.toFixed(3), 'KWD');
-  }
-  
-  // Second pass: Replace item mentions with correct prices - REMOVE INDIVIDUAL PRICES
-  // Instead of showing individual prices, we'll just keep the item names
-  (menu as any[]).forEach((item) => {
-    if (item.name_ar) {
-      const arName = item.name_ar;
-      const regex = new RegExp(
-        `${arName}(?:[^\u0600-\u06FF\d]*[\u0600-\u06FF\d\s]*)?(دينار كويتي)?`,
-        "g"
-      );
-      normalizedText = normalizedText.replace(
-        regex,
-        `${arName}`  // Only keep the item name without individual price
-      );
-    }
-  });
-  
-  // Add total price at the end if items were found
-  if (orderItems.length > 0) {
-    // Replace total_price_kwd placeholder with actual calculated total
-    normalizedText = normalizedText.replace(
-      /\{\{\s*total_price_kwd\s*\}\}/g,
-      `<b>${totalPrice.toFixed(3)}</b>`
-    );
     
-    // If there's no placeholder but we have items, add the total price at the end
-    if (!normalizedText.includes('{{total_price_kwd}}') && !normalizedText.includes('المجموع')) {
-      normalizedText += ` المجموع: <b>${totalPrice.toFixed(3)}</b> دينار كويتي`;
-    }
-  } else {
-    normalizedText = normalizedText.replace(
-      /\{\{\s*total_price_kwd\s*\}\}/g,
-      "<b>{{total_price_kwd}}</b>"
-    );
+    // Create total price display string
+    totalPriceDisplay = `المجموع: <b>${totalPrice.toFixed(3)}</b> دينار كويتي`;
   }
   
-  normalizedText = arabicWordsToNumber(normalizedText);
-  const priceDigitsRegex = /(\d+[.,]?\d*\s*دينار كويتي)/g;
-  normalizedText = normalizedText.replace(
-    priceDigitsRegex,
-    (match) => {
-      const numMatch = match.match(/\d+[.,]?\d*/);
-      if (numMatch) {
-        let num = numMatch[0].replace(",", ".");
-        let [intPart, decPart] = num.split(".");
-        let formatted = intPart;
-        if (decPart)
-          formatted += "." + decPart.padEnd(3, "0").slice(0, 3);
-        else formatted += ".000";
-        return `<b>${formatted}</b> دينار كويتي`;
-      }
-      return `<b>${match}</b>`;
-    }
-  );
-  // --- End price normalization logic ---
-
   // --- Message importance logic ---
-  // Define what is important: contains price, order, confirmation, or menu items
-  const isImportant =
-    /دينار كويتي|المجموع|السعر|total|order|طلب|تاكيد|confirm|\{\{\s*total_price_kwd\s*\}\}/i.test(normalizedText) ||
-    (menu as any[]).some(item => item.name_ar && normalizedText.includes(item.name_ar));
+  // Only total price is important, not the full message
+  const isImportant = orderItems.length > 0;
 
-  // Animate only important messages above the circle
-  const animatedImportant = useTypingEffect(isImportant ? normalizedText : '', 20);
-  // Show non-important as small text at the bottom
-  const nonImportantText = !isImportant && normalizedText ? normalizedText : '';
+  // Animate only total price above the circle
+  const animatedImportant = useTypingEffect(isImportant ? totalPriceDisplay : '', 20);
+  
+  // Show the full text at the bottom
+  const nonImportantText = normalizedText ? normalizedText : '';
   const displayedText = useTypingEffect('Click the circle to start the conversation', 20)
 
   const handleCircleClick = () => {
